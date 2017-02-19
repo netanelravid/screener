@@ -3,3 +3,4 @@ argparse
 *.pyc
 .idea
 .cache
+.coverage
