@@ -22,6 +22,9 @@ class Browser(object):
         self._driver.set_window_size(width=SCREENSHOT_WIDTH,
                                      height=SCREENSHOT_HEIGHT)
 
+    def __enter__(self):
+        return self
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._driver.quit()
 
