@@ -18,7 +18,7 @@ def test_take_screenshot(browser, httpserver, tmpdir):
     page_source = get_resource('example_com.html')
     httpserver.serve_content(page_source)
     browser.take_screenshot(url=httpserver.url,
-                            folder='/tmp/test',
+                            folder=folder,
                             filename=filename)
     screenshot_filename = '{fname}.{ext}'.format(fname=filename, ext=IMAGE_EXT)
     file_path = path.join(folder, screenshot_filename)

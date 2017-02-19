@@ -1,4 +1,5 @@
 other/
 argparse
 *.pyc
-.idea*
+.idea
+.cache
