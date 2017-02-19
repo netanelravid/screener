@@ -1,6 +1,7 @@
 other/
 argparse
 *.pyc
-.idea
-.cache
-.coverage
+*.idea
+*.cache
+*.coverage
+.code_services_checks_dev.md
