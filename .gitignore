@@ -4,4 +4,5 @@ argparse
 *.idea
 *.cache
 *.coverage
-.code_services_checks_dev.md
+*.code_services
+TODO_list.txt
