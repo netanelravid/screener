@@ -2,14 +2,14 @@ from requests import HTTPError
 from requests.exceptions import (
     MissingSchema,
     ConnectionError,
-    ConnectTimeout as RequestsConnectTimeout,
+    ConnectTimeout,
 )
 
 HTTP_ERRORS = (
     HTTPError,
     MissingSchema,
     ConnectionError,
-    RequestsConnectTimeout,
+    ConnectTimeout,
 )
 
 

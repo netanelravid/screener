@@ -8,6 +8,7 @@ SCREENSHOT_HEIGHT = 768
 
 #   Other
 CURRENT_DIR = getcwd()
+VERSION = 0.3
 
 #   Logging
 _handler = colorlog.StreamHandler()
