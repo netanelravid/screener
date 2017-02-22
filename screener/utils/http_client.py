@@ -7,7 +7,8 @@ from screener.exceptions import BadTargetException
 from screener.settings import (
     SCREENSHOT_WIDTH,
     SCREENSHOT_HEIGHT,
-    init_logger
+    init_logger,
+    DONE_PRINT,
 )
 from screener.utils.decorators import validate_target
 from .images import save_as_jpg
@@ -33,9 +34,11 @@ class Browser(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        logger.debug('Terminate PhantomJS webdriver..')
         self._driver.quit()
 
     def _init_driver(self):
+        logger.debug('Init PhantomJS webdriver..')
         try:
             self._driver = PhantomJS(service_log_path=LOGS_PATH)
         except WebDriverException as e:
@@ -53,13 +56,23 @@ class Browser(object):
         self._driver.get(url=url)
 
     def take_screenshot(self, url, folder, filename):
+        # Get request
         try:
             self.get(url=url)
         except BadTargetException as exc:
             logger.error(exc.message)
             return
+
+        # Screenshot
+        print("Saving image of {url}".format(url=url)),
+        logger.info("Screenshoting {url}".format(url=url))
         png_data = self._driver.get_screenshot_as_png()
         save_as_jpg(image_date=png_data, folder=folder, filename=filename)
-        log_msg = 'Saving image {name} for url {url}'.format(name=filename,
-                                                             url=url)
+
+        # Printing success
+        print(DONE_PRINT)
+        log_msg = "Image '{name}' for url {url} saved successfully".format(
+            name=filename,
+            url=url
+        )
         logger.info(log_msg)

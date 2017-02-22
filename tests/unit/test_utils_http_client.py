@@ -1,5 +1,6 @@
 from os import path
 
+import logging
 import mock
 import pytest
 from requests import ConnectTimeout
@@ -70,7 +71,8 @@ def test_take_screenshot(httpserver, tmpdir, example_site_source):
     filename = 'test_screenshot'
     httpserver.serve_content(example_site_source)
 
-    with LogCapture('screener.utils.http_client') as logger_capture:
+    with LogCapture('screener.utils.http_client', level=logging.INFO) \
+            as logger_capture:
         with Browser() as browser:
             browser.take_screenshot(
                 url=httpserver.url,
@@ -82,16 +84,20 @@ def test_take_screenshot(httpserver, tmpdir, example_site_source):
     assert path.isfile(file_path)
 
     log_1_msg = 'Requesting {url}'.format(url=httpserver.url)
-    log_2_msg = 'Saving image {name} for url {url}'.format(name=filename,
-                                                           url=httpserver.url)
+    log_2_msg = 'Screenshoting {url}'.format(url=httpserver.url)
+    log_3_msg = "Image '{name}' for url {url} saved successfully".format(
+        name=filename,
+        url=httpserver.url
+    )
     logger_capture.check(
         ('screener.utils.http_client', 'INFO', log_1_msg),
         ('screener.utils.http_client', 'INFO', log_2_msg),
+        ('screener.utils.http_client', 'INFO', log_3_msg),
     )
 
 
 @mock.patch('screener.utils.http_client.PhantomJS')
-@log_capture('screener.utils.http_client')
+@log_capture('screener.utils.http_client', level=logging.ERROR)
 def test_take_screenshot_invalid_webdriver(webdriver_mock, logger_capture):
     webdriver_mock.side_effect = WebDriverException(PHANTOMJS_ERR)
     with pytest.raises(WebDriverException):
@@ -104,7 +110,7 @@ def test_take_screenshot_invalid_webdriver(webdriver_mock, logger_capture):
 
 
 @mock.patch('screener.utils.http_client.Browser.get')
-@log_capture('screener.utils.http_client')
+@log_capture(level=logging.ERROR)
 def test_take_screenshot_http_error(browser_get_mock, logger_capture):
     err_msg = 'Error message'
     browser_get_mock.side_effect = BadTargetException(msg=err_msg)

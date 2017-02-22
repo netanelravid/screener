@@ -1,3 +1,11 @@
+0.3.0 (??/??/2017)
+++++++++++++++++++
+
+**Other**
+
+* Requirements split into 2 files (regular use & dev/tests)
+* Beautify Help message prompt
+
 0.2.0 (21/02/2017)
 ++++++++++++++++++
 
