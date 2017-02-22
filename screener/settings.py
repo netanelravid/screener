@@ -1,6 +1,7 @@
 from os import getcwd
 
 import colorlog
+from logging import DEBUG
 from colorama import (
     Style,
     Fore,
@@ -26,12 +27,11 @@ _logger_format = '%(log_color)s%(asctime)s:%(name)s:%(levelname)s: %(message)s'
 _formatter = colorlog.ColoredFormatter(_logger_format,
                                        datefmt='%d/%m/%Y %H:%M:%S')
 _handler.setFormatter(_formatter)
-_logger_level = colorlog.colorlog.logging.DEBUG
+_logger_level = DEBUG
 
 
 def init_logger(name):
     logger = colorlog.getLogger(name)
     logger.setLevel(_logger_level)
     logger.addHandler(_handler)
-    logger.disabled = False
     return logger

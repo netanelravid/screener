@@ -1,3 +1,5 @@
+import logging
+
 from colorama import init
 from docopt import docopt
 
@@ -10,6 +12,11 @@ def _init_color_printing():
 
 def screener_init():
     _init_color_printing()
+    _set_verbose_level('')
+
+
+def _set_verbose_level(level):
+    logging.basicConfig(level=logging.disable(logging.CRITICAL))
 
 
 def get_user_arguments():

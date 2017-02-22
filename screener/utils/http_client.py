@@ -15,9 +15,10 @@ from .images import save_as_jpg
 
 PAGE_LOAD_TIMEOUT = 60
 LOGS_PATH = os.devnull
-logger = init_logger(__name__)
 PHANTOMJS_ERR = "'phantomjs' executable needs to be in PATH."
 PHANTOMJS__CUSTOM_ERR = "Web driver exception (PhantomJS installed??), abort.."
+
+logger = init_logger(__name__)
 
 
 class Browser(object):
@@ -59,12 +60,12 @@ class Browser(object):
         # Get request
         try:
             self.get(url=url)
-        except BadTargetException as exc:
-            logger.error(exc.message)
+        except BadTargetException:
+            logger.error('Screenshot has not been taken.')
             return
 
         # Screenshot
-        print("Saving image of {url}".format(url=url)),
+        print("Saving image of {url}\t".format(url=url)),
         logger.info("Screenshoting {url}".format(url=url))
         png_data = self._driver.get_screenshot_as_png()
         save_as_jpg(image_date=png_data, folder=folder, filename=filename)

@@ -28,6 +28,9 @@ def validate_path(wrapped):
         if not folder:
             raise IOError('Invalid folder')
         if not isdir(folder):
+            logger.warning('folder {dir} does not exist, creating it.'.format(
+                dir=folder
+            ))
             makedirs(folder)
         return wrapped(*args, **kwargs)
     return inner
@@ -38,13 +41,19 @@ def validate_target(wrapped):
 
     def inner(*args, **kwargs):
         url = kwargs['url']
-        print('Validate URL {url}:'.format(url=url)),
+        msg = 'Validate URL {url}\t'.format(url=url)
+        logger.info(msg)
+        print(msg),
+
         try:
             response = http_get_request(url=url)
             response.raise_for_status()
         except HTTP_ERRORS as e:
+            logger.exception(e)
             print(FAILURE_PRINT + 'enable -v for verbosity')
             raise BadTargetException(msg=str(e.message))
+
         print(SUCCESS_PRINT)
+        logger.info('URL has been validated successfully.')
         return wrapped(*args, **kwargs)
     return inner

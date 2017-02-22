@@ -117,5 +117,7 @@ def test_take_screenshot_http_error(browser_get_mock, logger_capture):
     with Browser() as browser:
         browser.take_screenshot(url='http://test', folder='', filename='')
     logger_capture.check(
-        ('screener.utils.http_client', 'ERROR', err_msg),
+        ('screener.utils.http_client',
+         'ERROR',
+         'Screenshot has not been taken.'),
     )
