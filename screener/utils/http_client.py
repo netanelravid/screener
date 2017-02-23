@@ -7,7 +7,6 @@ from screener.exceptions import BadTargetException
 from screener.settings import (
     SCREENSHOT_WIDTH,
     SCREENSHOT_HEIGHT,
-    init_logger,
     DONE_PRINT,
 )
 from screener.utils.decorators import validate_target
@@ -18,7 +17,8 @@ LOGS_PATH = os.devnull
 PHANTOMJS_ERR = "'phantomjs' executable needs to be in PATH."
 PHANTOMJS__CUSTOM_ERR = "Web driver exception (PhantomJS installed??), abort.."
 
-logger = init_logger(__name__)
+logger = None
+LOGGER_NAME = __name__
 
 
 class Browser(object):
@@ -65,15 +65,15 @@ class Browser(object):
             return
 
         # Screenshot
-        print("Saving image of {url}\t".format(url=url)),
         logger.info("Screenshoting {url}".format(url=url))
+        print("Saving image of {url} ..".format(url=url))
         png_data = self._driver.get_screenshot_as_png()
         save_as_jpg(image_date=png_data, folder=folder, filename=filename)
 
         # Printing success
-        print(DONE_PRINT)
         log_msg = "Image '{name}' for url {url} saved successfully".format(
             name=filename,
             url=url
         )
         logger.info(log_msg)
+        print('Saving {done}'.format(done=DONE_PRINT))

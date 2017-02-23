@@ -4,7 +4,8 @@
 **Other**
 
 * Requirements split into 2 files (regular use & dev/tests)
-* Beautify Help message prompt
+* Beautify Help message prompt (AsciiArt rules!)
+* Printing and loggers were added (-v, -vv and -vvv)
 
 0.2.0 (21/02/2017)
 ++++++++++++++++++

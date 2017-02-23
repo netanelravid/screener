@@ -1,5 +1,3 @@
-import logging
-
 from colorama import (
     init,
     Fore,
@@ -7,7 +5,12 @@ from colorama import (
 )
 from docopt import docopt
 
-from .settings import VERSION
+from .settings import (
+    VERSION,
+    MAX_VERBOSITY,
+    VERBOSE_LEVELS,
+    init_logger
+)
 
 
 def _init_color_printing():
@@ -17,11 +20,12 @@ def _init_color_printing():
 def screener_init():
     _init_color_printing()
     _logo()
-    _set_verbose_level('')
 
 
 def _set_verbose_level(level):
-    logging.basicConfig(level=logging.disable(logging.CRITICAL))
+    import settings
+    level = MAX_VERBOSITY if level > MAX_VERBOSITY else level
+    settings.VERBOSITY_LEVEL = VERBOSE_LEVELS[level]
 
 
 def _logo():
@@ -53,23 +57,38 @@ def _logo():
 def get_user_arguments():
     """
     Usage:
-        screener.py (-u|--url) URL [-d=DIR|--dir=DIR] [-o=IMAGE|--output=IMAGE]
+        screener.py --url URL [--dir=DIR] [--output=IMAGE] [--verbose...]
 
     Options:
         -u --url                    Targeted URL to screenshot.
         -d=DIR,--dir=DIR            Output folder name [default: Results]
         -o=IMAGE,--output=IMAGE     Output image name [default: screenshot]
         -h --help                   Show this screen.
+        -v,--verbose                Verbosity level (-v, -vv, -vvv)
         --version                   Show version.
 
     Examples:
         screener.py -u http://www.github.com
+        screener.py -u http://www.amazon.com -v
+        screener.py -u http://www.ebay.com -vvv
         screener.py -u http://google.com -o google_website
         screener.py -u http://www.cnn.com -d my_screenshots
-    """
+    """  # noqa
     docstring = get_user_arguments.__doc__
     arguments = docopt(
         doc=docstring,
         version='Screener V{ver}'.format(ver=VERSION)
     )
     return arguments
+
+
+def init_loggers(verbose_level):
+    from .utils import (
+        decorators,
+        http_client,
+        images
+    )
+
+    _set_verbose_level(verbose_level)
+    for lib in (decorators, http_client, images):
+        lib.logger = init_logger(lib.LOGGER_NAME)

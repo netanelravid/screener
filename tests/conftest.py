@@ -1,6 +1,7 @@
-import logging
 import pytest
 
+from screener.helpers import init_loggers
+from screener.settings import MAX_VERBOSITY
 from tests.helpers import get_resource
 
 
@@ -11,4 +12,4 @@ def example_site_source():
 
 @pytest.fixture(autouse=True)
 def enable_loggers():
-    logging.basicConfig(level=logging.disable(logging.NOTSET))
+    init_loggers(verbose_level=MAX_VERBOSITY)

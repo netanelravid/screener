@@ -9,7 +9,7 @@ from six import StringIO
 from screener.settings import (
     SCREENSHOT_WIDTH,
     SCREENSHOT_HEIGHT,
-    init_logger)
+)
 from screener.utils.decorators import validate_path
 
 WINDOW_BOX = (0, 0, SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT)
@@ -17,7 +17,8 @@ IMAGE_EXT = 'jpg'
 IMAGE_TYPE = 'JPEG'
 IMAGE_QUALITY = 95
 
-logger = init_logger(__name__)
+logger = None
+LOGGER_NAME = __name__
 
 
 @validate_path

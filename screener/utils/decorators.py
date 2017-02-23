@@ -11,10 +11,10 @@ from screener.exceptions import (
 from screener.settings import (
     SUCCESS_PRINT,
     FAILURE_PRINT,
-    init_logger,
 )
 
-logger = init_logger(__name__)
+logger = None
+LOGGER_NAME = __name__
 
 
 def validate_path(wrapped):
@@ -49,8 +49,8 @@ def validate_target(wrapped):
             response = http_get_request(url=url)
             response.raise_for_status()
         except HTTP_ERRORS as e:
-            logger.exception(e)
             print(FAILURE_PRINT + 'enable -v for verbosity')
+            logger.exception(e)
             raise BadTargetException(msg=str(e.message))
 
         print(SUCCESS_PRINT)
