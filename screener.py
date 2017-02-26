@@ -1,23 +1,22 @@
-import argparse
-
-from screener.settings import CURRENT_DIR
+from screener.core.screenshoting import screenshot_single_target
+from screener.helpers import (
+    get_user_arguments,
+    screener_init,
+    init_loggers,
+)
+from screener.utils.context_manager import catch_keyboard_interrupt
 from screener.utils.http_client import Browser
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='WebApp screenshoter!.')
-    parser.add_argument('-url', help='URL to screenshot', required=True)
-    parser.add_argument('-dir',
-                        metavar='\b',
-                        help='Directory to save screenshot',
-                        default=CURRENT_DIR)
-    parser.add_argument('-filename',
-                        metavar='\b',
-                        help='Screenshot filename',
-                        default='screenshot')
-    args = parser.parse_args()
+    screener_init()
+    args = get_user_arguments()
+    init_loggers(verbose_level=args['--verbose'])
 
-    url = args.url
-    browser = Browser()
-    browser.take_screenshot(url=args.url,
-                            folder=args.dir,
-                            filename=args.filename)
+    with catch_keyboard_interrupt():
+        with Browser() as browser:
+            screenshot_single_target(
+                browser=browser,
+                url=args['URL'],
+                folder=args['--dir'],
+                filename=args['--output']
+            )

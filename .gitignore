@@ -6,3 +6,4 @@ argparse
 *.coverage
 *.code_services
 TODO_list.txt
+Results/

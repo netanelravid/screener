@@ -1,3 +1,19 @@
+0.3.0 (26/02/2017)
+++++++++++++++++++
+
+**Improvements**
+
+* Beautify Help message prompt (AsciiArt rules!)
+* Printing and loggers were added (-v, -vv and -vvv)
+
+**Issues**
+
+* Duplicate file handling
+
+**Other**
+
+* Requirements split into 2 files (regular use & dev/tests)
+
 0.2.0 (21/02/2017)
 ++++++++++++++++++
 

@@ -1,31 +1,46 @@
-from requests import HTTPError
 from requests.exceptions import (
+    InvalidSchema,
     MissingSchema,
-    ConnectionError,
-    ConnectTimeout as RequestsConnectTimeout,
+    InvalidURL,
 )
 
-HTTP_ERRORS = (
-    HTTPError,
+BAD_TARGET_ERRORS = (
     MissingSchema,
-    ConnectionError,
-    RequestsConnectTimeout,
+    InvalidSchema,
+    InvalidURL,
 )
 
 
-class BrowserError(BaseException):
-    pass
-
-
-class BadTargetException(BrowserError):
-    """When a HTTP request cause one of the following:
-    Timeout in response,
-    Bad status code,
-    Invalid URL,
-    Connection error.
-    """
+class CrawlerError(BaseException):
     def __init__(self, msg):
         self.message = msg
 
     def __str__(self):
         return repr(self.message)
+
+
+class InvalidTargetException(CrawlerError):
+    """Raised when the target could not be achieved."""
+    pass
+
+
+class BadStatusCode(CrawlerError):
+    """Raised when target response with bad status code."""
+    pass
+
+
+class ConnectionTimeout(CrawlerError):
+    """Raised when the timeout limit has achieved."""
+    pass
+
+
+class UnknownError(CrawlerError):
+    """
+    Occurred when none of the known errors raised (for logging and
+    Maintaining the code.
+    """
+    pass
+
+
+class DuplicateFile(IOError):
+    pass

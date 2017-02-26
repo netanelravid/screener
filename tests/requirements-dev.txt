@@ -1,0 +1,7 @@
+# Test
+mock==2.0.0
+pytest==3.0.6
+pytest-localserver==0.3.6
+pytest-xdist==1.15.0
+pytest-cov==2.4.0
+testfixtures==4.13.4
