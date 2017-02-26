@@ -14,17 +14,17 @@ SCREENSHOT_HEIGHT = 768
 #   Other
 CURRENT_DIR = getcwd()
 VERSION = 0.3
+NUM_OF_ARGS = 4
 
 #   Display
-COMMA_PRINT = '{style}, '.format(style=Style.RESET_ALL)
 SUCCESS_PRINT = '{style}{color}Success!'.format(
     style=Style.BRIGHT,
     color=Fore.GREEN,
 )
-FAILURE_PRINT = '{style}{color}Failed{comma}{message_color}'.format(
+FAILURE_PRINT = '{style}{color}Failed {hyphen}{message_color}'.format(
     style=Style.BRIGHT,
     color=Fore.RED,
-    comma=COMMA_PRINT,
+    hyphen='{style}-'.format(style=Style.RESET_ALL),
     message_color=Fore.YELLOW,
 )
 DONE_PRINT = '{style}{color}Done!'.format(
@@ -48,7 +48,13 @@ VERBOSE_LEVELS = {
     3: logging.DEBUG,
 }
 VERBOSITY_LEVEL = 0
-NUM_OF_LOGGERS = 3
+MODULES_WITH_LOGGERS = (
+    'screener.utils.decorators',
+    'screener.utils.http_client',
+    'screener.utils.images',
+    'screener.utils.context_manager',
+    'screener.core.screenshoting',
+)
 
 
 def init_logger(name):

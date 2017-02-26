@@ -4,12 +4,14 @@ from colorama import (
     Style,
 )
 from docopt import docopt
+from future.backports.test.support import import_module
 
 from .settings import (
     VERSION,
     MAX_VERBOSITY,
     VERBOSE_LEVELS,
-    init_logger
+    init_logger,
+    MODULES_WITH_LOGGERS,
 )
 
 
@@ -83,12 +85,8 @@ def get_user_arguments():
 
 
 def init_loggers(verbose_level):
-    from .utils import (
-        decorators,
-        http_client,
-        images
-    )
-
     _set_verbose_level(verbose_level)
-    for lib in (decorators, http_client, images):
+    modules_with_loggers = [import_module(module)
+                            for module in MODULES_WITH_LOGGERS]
+    for lib in modules_with_loggers:
         lib.logger = init_logger(lib.LOGGER_NAME)

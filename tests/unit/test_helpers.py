@@ -1,3 +1,4 @@
+import logging
 import sys
 from logging import (
     DEBUG,
@@ -8,13 +9,18 @@ from logging import (
 )
 
 import pytest
+from future.backports.test.support import import_module
 
 from screener.helpers import (
     screener_init,
     get_user_arguments,
     init_loggers,
 )
-from screener.settings import init_logger, NUM_OF_LOGGERS
+from screener.settings import (
+    init_logger,
+    NUM_OF_ARGS,
+    MODULES_WITH_LOGGERS,
+)
 
 
 @pytest.mark.parametrize('arguments, results', [
@@ -66,23 +72,25 @@ def test_get_user_arguments(arguments, results):
     assert args == results
 
 
+def test_get_user_arguments_total_num():
+    sys.argv = ('', '-u', '123')
+    args = get_user_arguments()
+    args.pop('--url')
+    assert len(args) == NUM_OF_ARGS
+
+
 def test_screener_init():
     #   Dump test, check that it runs without errors.
     screener_init()
 
 
 def test_init_loggers():
-    from screener.utils import (
-        decorators as _lib_decorators,
-        http_client as _lib_http_client,
-        images as _lib_images
-    )
+    init_loggers(logging.INFO)
 
-    libs = [lib for lib in dir() if lib.startswith('_lib_')]
-    assert len(libs) == NUM_OF_LOGGERS
-    for lib in (_lib_decorators, _lib_http_client, _lib_images):
-        lib.logger = init_logger(lib.LOGGER_NAME)
-        assert isinstance(lib.logger, _loggerClass)
+    modules_with_loggers = [import_module(module)
+                            for module in MODULES_WITH_LOGGERS]
+    for module in modules_with_loggers:
+        assert isinstance(module.logger, _loggerClass)
 
 
 @pytest.mark.parametrize('verbose_level, logging_level', [

@@ -3,14 +3,15 @@ import os
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import PhantomJS
 
-from screener.exceptions import BadTargetException
+from screener.exceptions import (
+    CrawlerError,
+    UnknownError,
+)
 from screener.settings import (
     SCREENSHOT_WIDTH,
     SCREENSHOT_HEIGHT,
-    DONE_PRINT,
 )
 from screener.utils.decorators import validate_target
-from .images import save_as_jpg
 
 PAGE_LOAD_TIMEOUT = 60
 LOGS_PATH = os.devnull
@@ -22,11 +23,12 @@ LOGGER_NAME = __name__
 
 
 class Browser(object):
-    __slots__ = ['name', '_driver']
+    __slots__ = ['name', '_driver', '_target_screenshot']
 
     def __init__(self):
         self.name = 'Screener'
         self._init_driver()
+        self._target_screenshot = None
         self._driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
         self._driver.set_window_size(width=SCREENSHOT_WIDTH,
                                      height=SCREENSHOT_HEIGHT)
@@ -52,28 +54,23 @@ class Browser(object):
         return self._driver.page_source
 
     @validate_target
-    def get(self, url):
+    def _get(self, url):
         logger.info('Requesting {url}'.format(url=url))
         self._driver.get(url=url)
+        self._target_screenshot = self._driver.get_screenshot_as_png()
 
-    def take_screenshot(self, url, folder, filename):
-        # Get request
+    def get(self, url):
+        self._target_screenshot = None
         try:
-            self.get(url=url)
-        except BadTargetException:
-            logger.error('Screenshot has not been taken.')
-            return
+            self._get(url=url)
+        except CrawlerError as e:
+            if isinstance(e, UnknownError):
+                logger.exception(e)
+            else:
+                logger.error(e.message)
+            return False
+        return True
 
-        # Screenshot
-        logger.info("Screenshoting {url}".format(url=url))
-        print("Saving image of {url} ..".format(url=url))
-        png_data = self._driver.get_screenshot_as_png()
-        save_as_jpg(image_date=png_data, folder=folder, filename=filename)
-
-        # Printing success
-        log_msg = "Image '{name}' for url {url} saved successfully".format(
-            name=filename,
-            url=url
-        )
-        logger.info(log_msg)
-        print('Saving {done}'.format(done=DONE_PRINT))
+    @property
+    def target_screenshot(self):
+        return self._target_screenshot

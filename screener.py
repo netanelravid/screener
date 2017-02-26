@@ -1,8 +1,10 @@
+from screener.core.screenshoting import screenshot_single_target
 from screener.helpers import (
     get_user_arguments,
     screener_init,
     init_loggers,
 )
+from screener.utils.context_manager import catch_keyboard_interrupt
 from screener.utils.http_client import Browser
 
 if __name__ == '__main__':
@@ -10,9 +12,11 @@ if __name__ == '__main__':
     args = get_user_arguments()
     init_loggers(verbose_level=args['--verbose'])
 
-    with Browser() as browser:
-        browser.take_screenshot(
-            url=args['URL'],
-            folder=args['--dir'],
-            filename=args['--output']
-        )
+    with catch_keyboard_interrupt():
+        with Browser() as browser:
+            screenshot_single_target(
+                browser=browser,
+                url=args['URL'],
+                folder=args['--dir'],
+                filename=args['--output']
+            )

@@ -1,104 +1,29 @@
-from os import path
-
 import logging
+
 import mock
 import pytest
-from requests import ConnectTimeout
 from selenium.common.exceptions import WebDriverException
 from testfixtures import (
     log_capture,
     LogCapture
 )
 
-from screener.exceptions import BadTargetException
+from screener.exceptions import (
+    InvalidTargetException,
+    BadStatusCode,
+    ConnectionTimeout,
+    UnknownError,
+)
 from screener.utils.http_client import (
     Browser,
     PHANTOMJS_ERR,
-    PHANTOMJS__CUSTOM_ERR
+    PHANTOMJS__CUSTOM_ERR,
 )
-from screener.utils.images import IMAGE_EXT
-
-
-def test_get_request(httpserver, example_site_source):
-    httpserver.serve_content(example_site_source)
-    with Browser() as browser:
-        with LogCapture('screener.utils.http_client') as logger_capture:
-            browser.get(url=httpserver.url)
-        browser_clean_source_page = browser.page_source.replace('\n', '')
-        example_site_clean_source_page = example_site_source.replace('\n', '')
-        assert browser_clean_source_page == example_site_clean_source_page
-    log_msg = 'Requesting {url}'.format(url=httpserver.url)
-    logger_capture.check(
-        ('screener.utils.http_client', 'INFO', log_msg),
-    )
-
-
-@pytest.mark.parametrize('status_code', [
-    401, 403, 500, 503
-])
-def test_get_request_bad_status_code(httpserver, status_code):
-    httpserver.serve_content('Error', status_code)
-
-    with pytest.raises(BadTargetException) as err:
-        with Browser() as browser:
-            browser.get(url=httpserver.url)
-    assert str(status_code) in err.value.message
-
-
-@pytest.mark.parametrize('url, domain', [
-    (None, 'None'),
-    ('', ''),
-    ('Invalid_url', 'Invalid_url'),
-    ('http://none', 'none'),
-])
-def test_get_request_invalid_url(url, domain):
-    with pytest.raises(BadTargetException) as err:
-        with Browser() as browser:
-            browser.get(url=url)
-    assert domain in err.value.message
-
-
-@mock.patch('screener.utils.decorators.http_get_request')
-def test_get_request_timeout(get_mock):
-    get_mock.side_effect = ConnectTimeout()
-    with pytest.raises(BadTargetException):
-        with Browser() as browser:
-            browser.get(url='http://test')
-
-
-def test_take_screenshot(httpserver, tmpdir, example_site_source):
-    folder = tmpdir.mkdir('screenshots').strpath
-    filename = 'test_screenshot'
-    httpserver.serve_content(example_site_source)
-
-    with LogCapture('screener.utils.http_client', level=logging.INFO) \
-            as logger_capture:
-        with Browser() as browser:
-            browser.take_screenshot(
-                url=httpserver.url,
-                folder=folder,
-                filename=filename
-            )
-    screenshot_filename = '{fname}.{ext}'.format(fname=filename, ext=IMAGE_EXT)
-    file_path = path.join(folder, screenshot_filename)
-    assert path.isfile(file_path)
-
-    log_1_msg = 'Requesting {url}'.format(url=httpserver.url)
-    log_2_msg = 'Screenshoting {url}'.format(url=httpserver.url)
-    log_3_msg = "Image '{name}' for url {url} saved successfully".format(
-        name=filename,
-        url=httpserver.url
-    )
-    logger_capture.check(
-        ('screener.utils.http_client', 'INFO', log_1_msg),
-        ('screener.utils.http_client', 'INFO', log_2_msg),
-        ('screener.utils.http_client', 'INFO', log_3_msg),
-    )
 
 
 @mock.patch('screener.utils.http_client.PhantomJS')
 @log_capture('screener.utils.http_client', level=logging.ERROR)
-def test_take_screenshot_invalid_webdriver(webdriver_mock, logger_capture):
+def test_init_browser_invalid_webdriver(webdriver_mock, logger_capture):
     webdriver_mock.side_effect = WebDriverException(PHANTOMJS_ERR)
     with pytest.raises(WebDriverException):
         Browser()
@@ -109,15 +34,35 @@ def test_take_screenshot_invalid_webdriver(webdriver_mock, logger_capture):
     )
 
 
-@mock.patch('screener.utils.http_client.Browser.get')
-@log_capture(level=logging.ERROR)
-def test_take_screenshot_http_error(browser_get_mock, logger_capture):
-    err_msg = 'Error message'
-    browser_get_mock.side_effect = BadTargetException(msg=err_msg)
+def test_get_request(httpserver, example_site_source):
+    httpserver.serve_content(example_site_source)
     with Browser() as browser:
-        browser.take_screenshot(url='http://test', folder='', filename='')
+        assert browser.target_screenshot is None
+        with LogCapture('screener.utils.http_client') as logger_capture:
+            browser.get(url=httpserver.url)
+        browser_clean_source_page = browser.page_source.replace('\n', '')
+        example_site_clean_source_page = example_site_source.replace('\n', '')
+        assert browser_clean_source_page == example_site_clean_source_page
+        assert browser.target_screenshot is not None
+    log_msg = 'Requesting {url}'.format(url=httpserver.url)
     logger_capture.check(
-        ('screener.utils.http_client',
-         'ERROR',
-         'Screenshot has not been taken.'),
+        ('screener.utils.http_client', 'INFO', log_msg),
     )
+
+
+@mock.patch('screener.utils.http_client.Browser._get')
+@pytest.mark.parametrize('exception, msg, exc_info', [
+    (BadStatusCode, 'bad status code', False),
+    (InvalidTargetException, 'invalid target', False),
+    (ConnectionTimeout, 'connection timeout', False),
+    (UnknownError, 'Unknown error, enable -v for more info', True),
+])
+def test_get_request_error(get_mock, exception, msg, exc_info, httpserver):
+    with Browser() as browser:
+        get_mock.side_effect = exception(msg=msg)
+        with LogCapture('screener.utils.http_client', level=logging.ERROR)\
+                as logger_capture:
+            browser.get(url=httpserver.url)
+        assert len(logger_capture.records) == 1
+        assert msg in str(logger_capture.records[0].msg)
+        assert bool(logger_capture.records[0].exc_info) is exc_info

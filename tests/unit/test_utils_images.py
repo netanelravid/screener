@@ -2,10 +2,15 @@ from os import path
 
 import pytest
 
-from screener.utils.images import (save_as_jpg, IMAGE_EXT)
-from tests.helpers import get_resource
-
-TEST_FILENAME = 'test_screenshot'
+from screener.exceptions import DuplicateFile
+from screener.utils.images import (
+    save_as_jpg,
+    IMAGE_EXT,
+)
+from tests.helpers import (
+    get_resource,
+    TEST_FILENAME,
+)
 
 
 @pytest.fixture(scope='module')
@@ -49,7 +54,7 @@ def test_save_as_jpg_file_exist_error(tmpdir, test_image):
     with open(file_path, 'w') as fp:
         fp.write('test')
     assert path.isfile(file_path)
-    with pytest.raises(IOError) as err:
+    with pytest.raises(DuplicateFile) as err:
         save_as_jpg(image_date=test_image,
                     folder=folder,
                     filename=TEST_FILENAME)
