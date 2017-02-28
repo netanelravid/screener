@@ -23,59 +23,59 @@ from screener.settings import (
 )
 
 
-@pytest.mark.parametrize('arguments, results', [
-    (('', '-u', '123'),
-     {'URL': '123',
-      '--dir': 'Results',
-      '--output': 'screenshot',
-      '--verbose': 0}),
-    (('', '-u', '123', '-v'),
-     {'URL': '123',
-      '--dir': 'Results',
-      '--output': 'screenshot',
-      '--verbose': 1}),
-    (('', '-u', '123', '-vvv'),
-     {'URL': '123',
-      '--dir': 'Results',
-      '--output': 'screenshot',
-      '--verbose': 3}),
-    (('', '-u', '123', '-d', 'temp_dir'),
-     {'URL': '123',
-      '--dir': 'temp_dir',
-      '--output': 'screenshot',
-      '--verbose': 0}),
-    (('', '-u', '123', '--dir', 'temp_dir'),
-     {'URL': '123',
-      '--dir': 'temp_dir',
-      '--output': 'screenshot',
-      '--verbose': 0}),
-    (('', '-u', '123', '-o', 'temp_image'),
-     {'URL': '123',
-      '--dir': 'Results',
-      '--output': 'temp_image',
-      '--verbose': 0}),
-    (('', '-u', '123', '--output', 'temp_image'),
-     {'URL': '123',
-      '--dir': 'Results',
-      '--output': 'temp_image',
-      '--verbose': 0}),
-    (('', '-u', '123', '-d', 'temp_dir', '-o', 'temp_image'),
-     {'URL': '123',
-      '--dir': 'temp_dir',
-      '--output': 'temp_image',
-      '--verbose': 0}),
+@pytest.mark.parametrize(u'arguments, results', [
+    ((u'', u'-u', u'123'),
+     {u'URL': u'123',
+      u'--dir': u'Results',
+      u'--output': u'screenshot',
+      u'--verbose': 0}),
+    ((u'', u'-u', u'123', u'-v'),
+     {u'URL': u'123',
+      u'--dir': u'Results',
+      u'--output': u'screenshot',
+      u'--verbose': 1}),
+    ((u'', u'-u', u'123', u'-vvv'),
+     {u'URL': u'123',
+      u'--dir': u'Results',
+      u'--output': u'screenshot',
+      u'--verbose': 3}),
+    ((u'', u'-u', u'123', u'-d', u'temp_dir'),
+     {u'URL': u'123',
+      u'--dir': u'temp_dir',
+      u'--output': u'screenshot',
+      u'--verbose': 0}),
+    ((u'', u'-u', u'123', u'--dir', u'temp_dir'),
+     {u'URL': u'123',
+      u'--dir': u'temp_dir',
+      u'--output': u'screenshot',
+      u'--verbose': 0}),
+    ((u'', u'-u', u'123', u'-o', u'temp_image'),
+     {u'URL': u'123',
+      u'--dir': u'Results',
+      u'--output': u'temp_image',
+      u'--verbose': 0}),
+    ((u'', u'-u', u'123', u'--output', u'temp_image'),
+     {u'URL': u'123',
+      u'--dir': u'Results',
+      u'--output': u'temp_image',
+      u'--verbose': 0}),
+    ((u'', u'-u', u'123', u'-d', u'temp_dir', u'-o', u'temp_image'),
+     {u'URL': u'123',
+      u'--dir': u'temp_dir',
+      u'--output': u'temp_image',
+      u'--verbose': 0}),
 ])
 def test_get_user_arguments(arguments, results):
     sys.argv = arguments
     args = get_user_arguments()
-    args.pop('--url')
+    args.pop(u'--url')
     assert args == results
 
 
 def test_get_user_arguments_total_num():
-    sys.argv = ('', '-u', '123')
+    sys.argv = (u'', u'-u', u'123')
     args = get_user_arguments()
-    args.pop('--url')
+    args.pop(u'--url')
     assert len(args) == NUM_OF_ARGS
 
 
@@ -93,7 +93,7 @@ def test_init_loggers():
         assert isinstance(module.logger, _loggerClass)
 
 
-@pytest.mark.parametrize('verbose_level, logging_level', [
+@pytest.mark.parametrize(u'verbose_level, logging_level', [
     (0, CRITICAL),
     (1, WARNING),
     (2, INFO),

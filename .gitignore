@@ -7,3 +7,4 @@ argparse
 *.code_services
 TODO_list.txt
 Results/
+*.hypothesis

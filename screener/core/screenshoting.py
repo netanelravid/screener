@@ -12,8 +12,8 @@ LOGGER_NAME = __name__
 def screenshot_single_target(browser, url, folder, filename):
     if not browser.get(url=url):
         return
-    logger.info("Saving image for target {url}".format(url=url))
-    print("Screenshoting {url}".format(url=url))
+    logger.info(u"Saving image for target {url}".format(url=url))
+    print(u"Screenshoting {url}".format(url=url))
     try:
         save_as_jpg(
             image_date=browser.target_screenshot,
@@ -21,16 +21,16 @@ def screenshot_single_target(browser, url, folder, filename):
             filename=filename
         )
     except DuplicateFile:
-        logger.warning("Image '{name}.{ext}' already exist".format(
+        logger.warning(u"Image '{name}.{ext}' already exist".format(
             name=filename,
             ext=IMAGE_EXT,
         ))
         return
 
     # Printing success
-    log_msg = "Image '{name}' for url {url} saved successfully".format(
+    log_msg = u"Image '{name}' for url {url} saved successfully".format(
         name=filename,
         url=url
     )
     logger.info(log_msg)
-    print('Saving {done}'.format(done=DONE_PRINT))
+    print(u'Saving {done}'.format(done=DONE_PRINT))

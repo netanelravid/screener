@@ -1,9 +1,9 @@
 from os import path
 
 ROOT = path.dirname(path.abspath(__file__))
-RESOURCES_FOLDER = path.join(ROOT, 'resources')
+RESOURCES_FOLDER = path.join(ROOT, u'resources')
 
-TEST_FILENAME = 'test_screenshot'
+TEST_FILENAME = u'test_screenshot'
 
 
 def get_resource(filename):

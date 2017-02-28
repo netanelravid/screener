@@ -28,12 +28,12 @@ from screener.settings import (
 logger = None
 LOGGER_NAME = __name__
 CRAWLER_EXCEPTION_MESSAGE = {
-    BadStatusCode: 'bad status code',
-    InvalidTargetException: 'invalid target',
-    ConnectionTimeout: 'connection timeout',
-    UnknownError: 'Unknown error, enable -v for more info'
+    BadStatusCode: u'bad status code',
+    InvalidTargetException: u'invalid target',
+    ConnectionTimeout: u'connection timeout',
+    UnknownError: u'Unknown error, enable -v for more info'
 }
-INVALID_TARGET_MESSAGE = "Failed to establish a new connection"
+INVALID_TARGET_MESSAGE = u'Failed to establish a new connection'
 
 
 def validate_path(*dec_args, **dec_kwargs):
@@ -41,27 +41,27 @@ def validate_path(*dec_args, **dec_kwargs):
         wraps(wrapped=wrapped)
 
         def inner(*args, **kwargs):
-            filename = kwargs['filename']
+            filename = kwargs[u'filename']
             if not filename:
-                raise IOError('Invalid filename')
-            file_ext = dec_kwargs['ext']
+                raise IOError(u'Invalid filename')
+            file_ext = dec_kwargs[u'ext']
             if not file_ext:
-                raise IOError('Invalid file extension')
-            folder = kwargs['folder']
+                raise IOError(u'Invalid file extension')
+            folder = kwargs[u'folder']
             if not folder:
-                raise IOError('Invalid folder')
-            filename_with_exit = '{name}.{ext}'.format(
+                raise IOError(u'Invalid folder')
+            filename_with_exit = u'{name}.{ext}'.format(
                 name=filename,
                 ext=file_ext
             )
             file_path = path.join(folder, filename_with_exit)
             if not isdir(folder):
-                logger.warning('folder {dir} does not exist, creating it.'.format(  # noqa
+                logger.warning(u'folder {dir} does not exist, creating it.'.format(  # noqa
                     dir=folder
                 ))
                 makedirs(folder)
             elif path.isfile(file_path):
-                raise DuplicateFile('File already exist')
+                raise DuplicateFile(u'File already exist')
             return wrapped(*args, **kwargs)
         return inner
     return outer
@@ -94,7 +94,7 @@ def validate_target(wrapped):
             _check_bad_status_code(response=response, error_message=error_msg)
             raise UnknownError(msg=error_msg)
         except ConnectTimeout:
-            raise ConnectionTimeout(msg='Connection timeout')
+            raise ConnectionTimeout(msg=u'Connection timeout')
         except (BAD_TARGET_ERRORS, ConnectionError) as exc:
             error_msg = str(exc.message)
             _check_bad_target(exception=exc, error_message=error_msg)
@@ -103,21 +103,21 @@ def validate_target(wrapped):
             raise_with_traceback(UnknownError(msg=str(exc.message)))
 
     def inner(*args, **kwargs):
-        url = kwargs['url']
-        msg = 'Validate URL {url}\t'.format(url=url)
+        url = kwargs[u'url']
+        msg = u'Validate URL {url}\t'.format(url=url)
         logger.info(msg)
         print(msg),
 
         try:
             _validate_target(url=url)
         except CrawlerError as e:
-            print('{failed} ({error})'.format(
+            print(u'{failed} ({error})'.format(
                 failed=FAILURE_PRINT,
                 error=CRAWLER_EXCEPTION_MESSAGE[e.__class__]
             ))
             raise e
 
         print(SUCCESS_PRINT)
-        logger.info('URL has been validated successfully.')
+        logger.info(u'URL has been validated successfully.')
         return wrapped(*args, **kwargs)
     return inner

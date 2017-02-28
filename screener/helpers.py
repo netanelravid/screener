@@ -31,7 +31,7 @@ def _set_verbose_level(level):
 
 
 def _logo():
-    print('''
+    print(u'''
 {style_1}{style_2}{color_2}------------------------------------------------------------------------------------------
 {style_1}{style_2}{color_2}\                                                                          Ver. {VER}      /
 {style_1}{style_1}{color_2} \    .oooooo..o    {color_5}                      Netanel.R.  {color_2}                                  /
@@ -57,7 +57,7 @@ def _logo():
 
 
 def get_user_arguments():
-    """
+    u"""
     Usage:
         screener.py --url URL [--dir=DIR] [--output=IMAGE] [--verbose...]
 
@@ -79,7 +79,7 @@ def get_user_arguments():
     docstring = get_user_arguments.__doc__
     arguments = docopt(
         doc=docstring,
-        version='Screener V{ver}'.format(ver=VERSION)
+        version=u'Screener V{ver}'.format(ver=VERSION)
     )
     return arguments
 

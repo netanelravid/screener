@@ -17,17 +17,17 @@ VERSION = 0.3
 NUM_OF_ARGS = 4
 
 #   Display
-SUCCESS_PRINT = '{style}{color}Success!'.format(
+SUCCESS_PRINT = u'{style}{color}Success!'.format(
     style=Style.BRIGHT,
     color=Fore.GREEN,
 )
-FAILURE_PRINT = '{style}{color}Failed {hyphen}{message_color}'.format(
+FAILURE_PRINT = u'{style}{color}Failed {hyphen}{message_color}'.format(
     style=Style.BRIGHT,
     color=Fore.RED,
-    hyphen='{style}-'.format(style=Style.RESET_ALL),
+    hyphen=u'{style}-'.format(style=Style.RESET_ALL),
     message_color=Fore.YELLOW,
 )
-DONE_PRINT = '{style}{color}Done!'.format(
+DONE_PRINT = u'{style}{color}Done!'.format(
     style=Style.BRIGHT,
     color=Fore.GREEN,
 )
@@ -35,7 +35,7 @@ DONE_PRINT = '{style}{color}Done!'.format(
 #   Logging
 _HANDLER = colorlog.StreamHandler()
 _HANDLER.setLevel(logging.INFO)
-_HANDLER_FORMAT = '%(log_color)s%(asctime)s:%(name)s:%(levelname)s: %(message)s'  # noqa
+_HANDLER_FORMAT = u'%(log_color)s%(asctime)s:%(name)s:%(levelname)s: %(message)s'  # noqa
 _FORMATTER = colorlog.ColoredFormatter(_HANDLER_FORMAT,
                                        datefmt='%d/%m/%Y %H:%M:%S')
 _HANDLER.setFormatter(_FORMATTER)
@@ -49,11 +49,11 @@ VERBOSE_LEVELS = {
 }
 VERBOSITY_LEVEL = 0
 MODULES_WITH_LOGGERS = (
-    'screener.utils.decorators',
-    'screener.utils.http_client',
-    'screener.utils.images',
-    'screener.utils.context_manager',
-    'screener.core.screenshoting',
+    u'screener.utils.decorators',
+    u'screener.utils.http_client',
+    u'screener.utils.images',
+    u'screener.utils.context_manager',
+    u'screener.core.screenshoting',
 )
 
 

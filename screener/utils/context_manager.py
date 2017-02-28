@@ -14,8 +14,8 @@ def catch_keyboard_interrupt():
     try:
         yield
     except KeyboardInterrupt:
-        logger.warning('Keyboard interrupt (CTRL-C)')
-        print("{style}{color}CTRL-C pressed, abort..".format(
+        logger.warning(u'Keyboard interrupt (CTRL-C)')
+        print(u"{style}{color}CTRL-C pressed, abort..".format(
             style=Style.BRIGHT,
             color=Fore.YELLOW,
         ))

@@ -12,10 +12,10 @@ from tests.helpers import TEST_FILENAME
 
 
 def test_screenshot_single_target(httpserver, tmpdir, example_site_source):
-    folder = tmpdir.mkdir('screenshots').strpath
+    folder = tmpdir.mkdir(u'screenshots').strpath
     httpserver.serve_content(example_site_source)
 
-    with LogCapture('screener', level=logging.INFO) as logger_capture:
+    with LogCapture(u'screener', level=logging.INFO) as logger_capture:
         with Browser() as browser:
             screenshot_single_target(
                 browser=browser,
@@ -24,7 +24,7 @@ def test_screenshot_single_target(httpserver, tmpdir, example_site_source):
                 filename=TEST_FILENAME
             )
     assert browser.target_screenshot is not None
-    screenshot_filename = '{fname}.{ext}'.format(
+    screenshot_filename = u'{fname}.{ext}'.format(
         fname=TEST_FILENAME,
         ext=IMAGE_EXT,
     )
@@ -32,36 +32,36 @@ def test_screenshot_single_target(httpserver, tmpdir, example_site_source):
     assert path.isfile(file_path)
 
     logger_capture.check(
-        ('screener.utils.decorators',
-         'INFO',
-         'Validate URL {url}\t'.format(url=httpserver.url)),
-        ('screener.utils.decorators',
-         'INFO',
-         'URL has been validated successfully.'),
-        ('screener.utils.http_client',
-         'INFO',
-         'Requesting {url}'.format(url=httpserver.url)),
-        ('screener.core.screenshoting',
-         'INFO',
-         'Saving image for target {url}'.format(url=httpserver.url)),
-        ('screener.core.screenshoting',
-         'INFO',
-         "Image '{name}' for url {url} saved successfully".format(
+        (u'screener.utils.decorators',
+         u'INFO',
+         u'Validate URL {url}\t'.format(url=httpserver.url)),
+        (u'screener.utils.decorators',
+         u'INFO',
+         u'URL has been validated successfully.'),
+        (u'screener.utils.http_client',
+         u'INFO',
+         u'Requesting {url}'.format(url=httpserver.url)),
+        (u'screener.core.screenshoting',
+         u'INFO',
+         u'Saving image for target {url}'.format(url=httpserver.url)),
+        (u'screener.core.screenshoting',
+         u'INFO',
+         u"Image '{name}' for url {url} saved successfully".format(
              name=TEST_FILENAME,
              url=httpserver.url,
          ))
     )
 
 
-@mock.patch('screener.utils.decorators.http_get_request')
+@mock.patch(u'screener.utils.decorators.http_get_request')
 def test_screenshot_single_target_error(
         get_mock, httpserver, tmpdir, example_site_source):
-    folder = tmpdir.mkdir('screenshots').strpath
+    folder = tmpdir.mkdir(u'screenshots').strpath
     httpserver.serve_content(example_site_source)
-    err_msg = 'Timeout'
+    err_msg = u'Timeout'
     get_mock.side_effect = ConnectionTimeout(msg=err_msg)
 
-    with LogCapture('screener', level=logging.INFO) as logger_capture:
+    with LogCapture(u'screener', level=logging.INFO) as logger_capture:
         with Browser() as browser:
             screenshot_single_target(
                 browser=browser,
@@ -69,7 +69,7 @@ def test_screenshot_single_target_error(
                 folder=folder,
                 filename=TEST_FILENAME
             )
-    screenshot_filename = '{fname}.{ext}'.format(
+    screenshot_filename = u'{fname}.{ext}'.format(
         fname=TEST_FILENAME,
         ext=IMAGE_EXT,
     )
@@ -78,16 +78,16 @@ def test_screenshot_single_target_error(
     assert browser.target_screenshot is None
 
     logger_capture.check(
-        ('screener.utils.decorators',
-         'INFO',
-         'Validate URL {url}\t'.format(url=httpserver.url)),
-        ('screener.utils.http_client', 'ERROR', 'Timeout'),
+        (u'screener.utils.decorators',
+         u'INFO',
+         u'Validate URL {url}\t'.format(url=httpserver.url)),
+        (u'screener.utils.http_client', u'ERROR', u'Timeout'),
     )
 
 
 def test_screenshot_single_target_capture_twice(
         httpserver, tmpdir, example_site_source):
-    folder = tmpdir.mkdir('screenshots').strpath
+    folder = tmpdir.mkdir(u'screenshots').strpath
     httpserver.serve_content(example_site_source)
 
     with Browser() as browser:
@@ -97,14 +97,14 @@ def test_screenshot_single_target_capture_twice(
             folder=folder,
             filename=TEST_FILENAME
         )
-    screenshot_filename = '{fname}.{ext}'.format(
+    screenshot_filename = u'{fname}.{ext}'.format(
         fname=TEST_FILENAME,
         ext=IMAGE_EXT,
     )
     file_path = path.join(folder, screenshot_filename)
     assert path.isfile(file_path)
 
-    with LogCapture('screener', level=logging.INFO) as logger_capture:
+    with LogCapture(u'screener', level=logging.INFO) as logger_capture:
         with Browser() as browser:
             screenshot_single_target(
                 browser=browser,
@@ -114,21 +114,21 @@ def test_screenshot_single_target_capture_twice(
             )
 
     logger_capture.check(
-        ('screener.utils.decorators',
-         'INFO',
-         'Validate URL {url}\t'.format(url=httpserver.url)),
-        ('screener.utils.decorators',
-         'INFO',
-         'URL has been validated successfully.'),
-        ('screener.utils.http_client',
-         'INFO',
-         'Requesting {url}'.format(url=httpserver.url)),
-        ('screener.core.screenshoting',
-         'INFO',
-         'Saving image for target {url}'.format(url=httpserver.url)),
-        ('screener.core.screenshoting',
-         'WARNING',
-         "Image '{name}.{ext}' already exist".format(
+        (u'screener.utils.decorators',
+         u'INFO',
+         u'Validate URL {url}\t'.format(url=httpserver.url)),
+        (u'screener.utils.decorators',
+         u'INFO',
+         u'URL has been validated successfully.'),
+        (u'screener.utils.http_client',
+         u'INFO',
+         u'Requesting {url}'.format(url=httpserver.url)),
+        (u'screener.core.screenshoting',
+         u'INFO',
+         u'Saving image for target {url}'.format(url=httpserver.url)),
+        (u'screener.core.screenshoting',
+         u'WARNING',
+         u"Image '{name}.{ext}' already exist".format(
              name=TEST_FILENAME,
              ext=IMAGE_EXT
          ))

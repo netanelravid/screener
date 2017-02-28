@@ -15,8 +15,8 @@ from screener.utils.decorators import validate_target
 
 PAGE_LOAD_TIMEOUT = 60
 LOGS_PATH = os.devnull
-PHANTOMJS_ERR = "'phantomjs' executable needs to be in PATH."
-PHANTOMJS__CUSTOM_ERR = "Web driver exception (PhantomJS installed??), abort.."
+PHANTOMJS_ERR = u"'phantomjs' executable needs to be in PATH."
+PHANTOMJS__CUSTOM_ERR = u"Web driver exception (PhantomJS installed?), abort.."
 
 logger = None
 LOGGER_NAME = __name__
@@ -37,11 +37,11 @@ class Browser(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        logger.debug('Terminate PhantomJS webdriver..')
+        logger.debug(u'Terminate PhantomJS webdriver..')
         self._driver.quit()
 
     def _init_driver(self):
-        logger.debug('Init PhantomJS webdriver..')
+        logger.debug(u'Init PhantomJS webdriver..')
         try:
             self._driver = PhantomJS(service_log_path=LOGS_PATH)
         except WebDriverException as e:
@@ -55,7 +55,7 @@ class Browser(object):
 
     @validate_target
     def _get(self, url):
-        logger.info('Requesting {url}'.format(url=url))
+        logger.info(u'Requesting {url}'.format(url=url))
         self._driver.get(url=url)
         self._target_screenshot = self._driver.get_screenshot_as_png()
 
