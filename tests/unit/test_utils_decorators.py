@@ -17,7 +17,7 @@ from screener.exceptions import (
 )
 from screener.utils.decorators import (
     validate_path,
-    validate_target,
+    check_target,
 )
 from tests.helpers import TEST_FILENAME
 
@@ -72,7 +72,7 @@ def test_validate_path_file_already_exist(tmpdir):
     assert err.value.message == u'File already exist'
 
 
-@validate_target
+@check_target
 def useless_func_validate_target(url):
     return True
 

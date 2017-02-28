@@ -1,9 +1,7 @@
 from functools import wraps
-from os import makedirs
-from os.path import isdir
+from os import makedirs, path
 
 from future.utils import raise_with_traceback
-from os import path
 from requests import (
     get as http_get_request,
     HTTPError,
@@ -55,7 +53,7 @@ def validate_path(*dec_args, **dec_kwargs):
                 ext=file_ext
             )
             file_path = path.join(folder, filename_with_exit)
-            if not isdir(folder):
+            if not path.isdir(folder):
                 logger.warning(u'folder {dir} does not exist, creating it.'.format(  # noqa
                     dir=folder
                 ))
@@ -67,7 +65,7 @@ def validate_path(*dec_args, **dec_kwargs):
     return outer
 
 
-def validate_target(wrapped):
+def check_target(wrapped):
     wraps(wrapped=wrapped)
 
     def _check_bad_status_code(response, error_message):
@@ -83,7 +81,7 @@ def validate_target(wrapped):
             (isinstance(exception, ConnectionError) and (INVALID_TARGET_MESSAGE in error_message))):  # noqa
             raise InvalidTargetException(msg=error_message)
 
-    def _validate_target(url):
+    def _check_target(url):
         response = None
 
         try:
@@ -109,7 +107,7 @@ def validate_target(wrapped):
         print(msg),
 
         try:
-            _validate_target(url=url)
+            _check_target(url=url)
         except CrawlerError as e:
             print(u'{failed} ({error})'.format(
                 failed=FAILURE_PRINT,

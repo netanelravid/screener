@@ -11,7 +11,7 @@ from screener.settings import (
     SCREENSHOT_WIDTH,
     SCREENSHOT_HEIGHT,
 )
-from screener.utils.decorators import validate_target
+from screener.utils.decorators import check_target
 
 PAGE_LOAD_TIMEOUT = 60
 LOGS_PATH = os.devnull
@@ -26,7 +26,7 @@ class Browser(object):
     __slots__ = ['name', '_driver', '_target_screenshot']
 
     def __init__(self):
-        self.name = 'Screener'
+        self.name = u'Screener'
         self._init_driver()
         self._target_screenshot = None
         self._driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
@@ -53,7 +53,7 @@ class Browser(object):
     def page_source(self):
         return self._driver.page_source
 
-    @validate_target
+    @check_target
     def _get(self, url):
         logger.info(u'Requesting {url}'.format(url=url))
         self._driver.get(url=url)
